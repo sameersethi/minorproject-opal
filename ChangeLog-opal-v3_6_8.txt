@@ -1,0 +1,39 @@
+2010-02-01 00:22  rjongbloed
+
+	* [r24004] version.h:
+	  Update version number for beta v3.6.8
+
+2010-02-23 22:14  rjongbloed
+
+	* [r24073] src/sip/sipcon.cxx:
+	  Fixed possible NULL pointer access if get multiple NOTIFY
+	  messages on a REFER.
+
+2010-05-07 15:14  ededu
+
+	* [r24327] src/rtp/rtp.cxx:
+	  Fixed Restricted Cone and Port Restricted Cone NAT varieties to
+	  correctly send out translated RTP address and port.
+
+2010-05-07 18:10  ededu
+
+	* [r24329] plugins/aclocal.m4, plugins/audio/celt/celtcodec.c,
+	  plugins/configure, plugins/configure.ac:
+	  Applied patch for CELT plug in, thanks e.schmidbauer
+
+2010-05-07 18:34  ededu
+
+	* [r24330] src/sip/sippdu.cxx:
+	  Applied patch ID: 2985160 "IPv6 fixes", thanks Arseniy Lartsev.
+
+2010-05-11 08:10  ededu
+
+	* [r24336] plugins/plugin-config.h.in:
+	  Fix celt recognition introduced a few days ago
+
+2010-05-18 01:29  rjongbloed
+
+	* [r24346] src/opal/opal_c.cxx:
+	  Fixed "C" API call transfer command using call forwarding
+	  mechanism if call not yet connected.
+
