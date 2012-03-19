@@ -1026,6 +1026,12 @@ void OpalManager_C::HandleSetGeneral(const OpalMessage & command, OpalMessageBuf
     echoCancelParams.m_mode = (OpalEchoCanceler::Mode)(command.m_param.m_general.m_echoCancellation-1);
   SetEchoCancelParams(echoCancelParams);
 
+  OpalAudioLevelCalculator::Params audioLevelParams = GetAudioLevelParams();
+  response->m_param.m_general.m_audioLevelCalculation = (OpalAudioLevelCalculationMode)(audioLevelParams.m_mode+1);
+  if (command.m_param.m_general.m_audioLevelCalculation != 0)
+    audioLevelParams.m_mode = (OpalAudioLevelCalculator::Mode)(command.m_param.m_general.m_audioLevelCalculation-1);
+  SetAudioLevelParams(audioLevelParams);
+
   if (m_apiVersion < 3)
     return;
 

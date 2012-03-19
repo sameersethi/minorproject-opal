@@ -44,6 +44,7 @@
 #include <opal/audiorecord.h>
 #include <codec/silencedetect.h>
 #include <codec/echocancel.h>
+#include <codec/audiolevelcalc.h>
 #include <ptclib/pstun.h>
 
 #if OPAL_VIDEO
@@ -1136,6 +1137,16 @@ class OpalManager : public PObject
      */
     const OpalEchoCanceler::Params & GetEchoCancelParams() const { return echoCancelParams; }
 
+    /**Set the default parameters for the audio level calculator.
+     */
+    virtual void SetAudioLevelParams(
+      const OpalAudioLevelCalculator::Params & params
+    ) { audioLevelParams = params; }
+
+    /**Get the default parameters for the audio level calculator.
+     */
+    const OpalAudioLevelCalculator::Params & GetAudioLevelParams() const { return audioLevelParams; }
+
 #if OPAL_VIDEO
 
     /**Set the parameters for the video device to be used for input.
@@ -1294,6 +1305,7 @@ class OpalManager : public PObject
 
     OpalSilenceDetector::Params silenceDetectParams;
     OpalEchoCanceler::Params echoCancelParams;
+    OpalAudioLevelCalculator::Params audioLevelParams;
 
 #if OPAL_VIDEO
     PVideoDevice::OpenArgs videoInputDevice;

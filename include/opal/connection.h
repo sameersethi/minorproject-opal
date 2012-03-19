@@ -53,6 +53,7 @@
 class OpalEndPoint;
 class OpalCall;
 class OpalSilenceDetector;
+class OpalAudioLevelCalculator;
 class OpalEchoCanceler;
 class OpalRFC2833Proto;
 class OpalRFC2833Info;
@@ -1381,6 +1382,10 @@ class OpalConnection : public PSafeObject
     */
     OpalEchoCanceler * GetEchoCanceler() const { return echoCanceler; }
 
+    /**Get the echo canceler active on connection.
+    */
+    OpalAudioLevelCalculator * GetAudioLevelCalculator() const { return audioLevelCalculator; }
+
     /**Get the protocol-specific unique identifier for this connection.
        Default behaviour just returns the connection token.
      */
@@ -1513,6 +1518,7 @@ class OpalConnection : public PSafeObject
 
     OpalSilenceDetector * silenceDetector;
     OpalEchoCanceler    * echoCanceler;
+    OpalAudioLevelCalculator * audioLevelCalculator;
 
     MediaAddressesDict         mediaTransportAddresses;
     PSafeList<OpalMediaStream> mediaStreams;

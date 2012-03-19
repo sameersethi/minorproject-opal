@@ -401,6 +401,15 @@ typedef enum OpalEchoCancelMode {
   OpalEchoCancelEnabled     /**< Indicate the echo cancellation is enabled */
 } OpalEchoCancelMode;
 
+/**Type code the audio level calculation modes.
+   This is used by the OpalCmdSetGeneralParameters command in the OpalParamGeneral structure.
+  */
+typedef enum OpalAudioLevelCalculationMode {
+  OpalAudioLevelNoChange,   /**< No change to the audio level mode. */
+  OpalAudioLevelDisabled,   /**< Indicate the audio level is disabled */
+  OpalAudioLevelEnabled     /**< Indicate the audio level is enabled */
+} OpalAudioLevelCalculationMode;
+
 
 /** Function for reading/writing media data.
     Returns size of data actually read or written, or -1 if there is an error
@@ -527,6 +536,8 @@ typedef struct OpalParamGeneral {
                                            units (8000Hz). */
   OpalEchoCancelMode m_echoCancellation; /**< Accoustic Echo Cancellation control. 0=no change, 1=disabled,
                                               2=enabled. */
+  OpalAudioLevelCalculationMode m_audioLevelCalculation; /**< Audio Level Calculation. 0=no change, 1=disabled,
+  	  	  	  	  	  	  	  	  	  	  	  2=enabled. */
   unsigned     m_audioBuffers;        /**< Set the number of hardware sound buffers to use. */
   OpalMediaDataFunction m_mediaReadData;   /**< Callback function for reading raw media data. See
                                                 OpalMediaDataFunction for more information. */
