@@ -367,6 +367,7 @@ SOURCES += $(OPAL_SRCDIR)/codec/g711codec.cxx \
            $(OPAL_SRCDIR)/codec/opalwavfile.cxx \
 	   $(OPAL_SRCDIR)/codec/silencedetect.cxx \
 	   $(OPAL_SRCDIR)/codec/echocancel.cxx \
+	   $(OPAL_SRCDIR)/codec/audiolevelcalc.cxx \
 	   $(OPAL_SRCDIR)/codec/opalpluginmgr.cxx \
 	   $(OPAL_SRCDIR)/codec/ratectl.cxx 
 
