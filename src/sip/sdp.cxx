@@ -755,6 +755,34 @@ bool SDPMediaDescription::PrintOn(ostream & str, const PString & connectString) 
       break;
   }
 
+  /* *********************** Change Made for RFC 6464 ************************ *
+   * ************************************************************************* *
+   * *According to RFC 6464, the URI for declaring the Client-to-Mixer header* *
+   * *in an extmap attribute is "urn:ietf:params:rtp-hdrext:ssrc-audio-level"* *
+   * *It has a single extension attribute, named "vad", which takes the form * *
+   * *"vad=on" or "vad=off".												 * *
+   * ***************************************************************************
+   * ***************************************************************************/
+  for (SDPMediaFormatList::const_iterator format = formats.begin(); format != formats.end(); ++format) {
+	  const OpalMediaFormat & mediaFormat = format->GetMediaFormat();
+	  if (mediaFormat.HasOption(OpalAudioFormat::RFC6464Option())) {
+
+	      PTRACE(2, "TEST LOG: Got Here 2 ");
+
+		  str << "a=extmap:7/sendonly urn:ietf:params:rtp-hdrext:ssrc-audio-level vad=off" << "\r\n";
+
+		  //Hack for now...We only want to insert it once
+		  break;
+	  } else if (mediaFormat.HasOption(OpalAudioFormat::RFC6464WithVADOption())) {
+	      PTRACE(2, "TEST LOG: Got Here 3");
+
+	      str << "a=extmap:7/sendonly urn:ietf:params:rtp-hdrext:ssrc-audio-level vad=on" << "\r\n";
+
+		  //Hack for now...We only want to insert it once
+	      break;
+	  }
+  }
+
   return true;
 }
 
@@ -887,8 +915,10 @@ bool SDPRTPAVPMediaDescription::PrintOn(ostream & str, const PString & connectSt
 
   // output attributes for each payload type
   SDPMediaFormatList::const_iterator format;
-  for (format = formats.begin(); format != formats.end(); ++format)
-    str << *format;
+  for (format = formats.begin(); format != formats.end(); ++format) {
+	  // output attributes for each payload type
+	  str << *format;
+  }
 
   return true;
 }
@@ -966,6 +996,7 @@ bool SDPAudioMediaDescription::PrintOn(ostream & str, const PString & connectStr
 
   if (maxptime < UINT_MAX)
     str << "a=maxptime:" << maxptime << "\r\n";
+
 #endif // HAVE_PTIME
 
   return true;

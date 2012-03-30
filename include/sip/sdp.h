@@ -86,6 +86,9 @@ class SDPMediaFormat : public PObject
     void SetFMTP(const PString & _fmtp); 
     PString GetFMTP() const;
 
+    void SetExtmapURI(const PString & _uri);
+    PString GetExtmapURI() const;
+
     unsigned GetClockRate(void)                        { return clockRate ; }
     void SetClockRate(unsigned  v)                     { clockRate = v; }
 
@@ -109,6 +112,7 @@ class SDPMediaFormat : public PObject
     PString encodingName;
     PString parameters;
     PString fmtp;
+    PString extmap_uri;
 };
 
 PLIST(SDPMediaFormatList, SDPMediaFormat);

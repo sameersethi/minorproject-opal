@@ -1340,6 +1340,9 @@ const PString & OpalAudioFormat::RxFramesPerPacketOption() { static PString s = 
 const PString & OpalAudioFormat::TxFramesPerPacketOption() { static PString s = PLUGINCODEC_OPTION_TX_FRAMES_PER_PACKET; return s; }
 const PString & OpalAudioFormat::MaxFramesPerPacketOption(){ static PString s = "Max Frames Per Packet"; return s; }
 const PString & OpalAudioFormat::ChannelsOption()          { static PString s = "Channels"; return s; }
+const PString & OpalAudioFormat::RFC6464Option()		   { static PString s = PLUGINCODEC_OPTION_RFC6464; return s; }
+const PString & OpalAudioFormat::RFC6464WithVADOption()	   { static PString s = PLUGINCODEC_OPTION_RFC6464_WITHVAD; return s; }
+
 
 OpalAudioFormat::OpalAudioFormat(const char * fullName,
                                  RTP_DataFrame::PayloadTypes rtpPayloadType,

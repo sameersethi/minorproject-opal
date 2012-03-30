@@ -1120,6 +1120,8 @@ class OpalAudioFormat : public OpalMediaFormat
     static const PString & TxFramesPerPacketOption();
     static const PString & MaxFramesPerPacketOption();
     static const PString & ChannelsOption();
+    static const PString & RFC6464Option();
+    static const PString & RFC6464WithVADOption();
 };
 
 #if OPAL_VIDEO
