@@ -60,7 +60,7 @@ class OpalAudioLevelCalculator : public PObject
     );
 
     void GetAudioLevelStatus(
-      int * audioLevel,
+      PINDEX * audioLevel,
       int * vad
     ) const;
 
@@ -71,7 +71,7 @@ class OpalAudioLevelCalculator : public PObject
 
        The default behaviour returns -1 in VAD to indicate VAD is not enabled.
       */
-    virtual int GetAudioLevel(
+    virtual PINDEX GetAudioLevel(
       const BYTE * buffer,  ///<  RTP payload being detected
       PINDEX size           ///<  Size of payload buffer
     );
@@ -83,11 +83,12 @@ class OpalAudioLevelCalculator : public PObject
 
     Params param;
 
-    int     m_audioLevel;
+    PINDEX     m_audioLevel;
     int 	m_vad;
 };
 
 
 extern ostream & operator<<(ostream & strm, OpalAudioLevelCalculator::Mode mode);
+
 
 #endif /* AUDIOLEVELCALC_H_ */

@@ -32,7 +32,6 @@ ostream & operator<<(ostream & strm, OpalAudioLevelCalculator::Mode mode)
   return strm;
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 
 OpalAudioLevelCalculator::OpalAudioLevelCalculator(const Params & theParam)
@@ -56,9 +55,12 @@ void OpalAudioLevelCalculator::SetParameters(const Params & newParam)
 
   PTRACE(4, "Audio Level Calc\tParameters set: "
             "mode=" << param.m_mode << ", ");
+
+  m_audioLevel = 0;
+  m_vad = 0;
 }
 
-void OpalAudioLevelCalculator::GetAudioLevelStatus(int * audioLevel,int * vad)const
+void OpalAudioLevelCalculator::GetAudioLevelStatus(PINDEX * audioLevel,int * vad)const
 {
 	*audioLevel = m_audioLevel;
 	*vad = m_vad;
@@ -74,10 +76,18 @@ void OpalAudioLevelCalculator::ReceivedPacket(RTP_DataFrame & frame, INT)
 	if (param.m_mode == NoAudioLevelCalculation)
 		return;
 
+	PTRACE(4, "Audio Level Calc\tReceived Packet.");
 
-	// Can never have average signal level that high, this indicates that the
-	// hardware cannot do silence detection.
+
+	// Calculate the audio level of the current packet
 	m_audioLevel = GetAudioLevel(frame.GetPayloadPtr(), frame.GetPayloadSize());
+
+	PTRACE(4, "Audio Level Calc\tReceived Packet Audio Level: " << m_audioLevel);
+
+
+	//Set the extension flag and the extension header according to RFC 6464
+	frame.SetExtension(PTrue);
+	frame.SetRFC6464(m_audioLevel);
 
 	if (param.m_mode == AudioLevelCalculationWithVAD)
 	{
@@ -87,7 +97,7 @@ void OpalAudioLevelCalculator::ReceivedPacket(RTP_DataFrame & frame, INT)
 
 }
 
-int OpalAudioLevelCalculator::GetAudioLevel(const BYTE * buffer, PINDEX size)
+PINDEX OpalAudioLevelCalculator::GetAudioLevel(const BYTE * buffer, PINDEX size)
 {
 	double rms = 0;
 
@@ -123,6 +133,9 @@ int OpalAudioLevelCalculator::GetAudioLevel(const BYTE * buffer, PINDEX size)
 		db = MIN_AUDIO_LEVEL;
 	}
 
-	return (int)floor(db);
+	// According to RFC 6464, the max audio level is 0 and min audio level is -127.
+	// But in RTP Header Extension these should be transmitted between 0 and 127.
+	// So a value of 127 in Extension Header signifies -127 dBov in real.
+	return (PINDEX)abs(floor(db));
 }
 

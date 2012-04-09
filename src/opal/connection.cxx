@@ -184,6 +184,7 @@ OpalConnection::OpalConnection(OpalCall & call,
   , q931Cause(0x100)
   , silenceDetector(NULL)
   , echoCanceler(NULL)
+  , audioLevelCalculator(NULL)
 #ifdef _MSC_VER
 #pragma warning(disable:4355)
 #endif
@@ -234,6 +235,7 @@ OpalConnection::~OpalConnection()
 
   delete silenceDetector;
   delete echoCanceler;
+  delete audioLevelCalculator;
 #if OPAL_T120DATA
   delete t120handler;
 #endif

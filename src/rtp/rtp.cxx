@@ -204,6 +204,52 @@ PBoolean RTP_DataFrame::SetPayloadSize(PINDEX sz)
   return SetMinSize(GetHeaderSize()+payloadSize);
 }
 
+void RTP_DataFrame::SetRFC6464(int audioLevel)
+{
+	// Change the size to accommodate our extension header
+	if (!SetMinSize(MinHeaderSize + 4*GetContribSrcCount() + 4+4 + payloadSize))
+	{
+		PTRACE(3, "Got error/n");
+	}
+
+	// Move the payload pointer to appropriate position
+    BYTE * oldPayload = GetPayloadPtr();
+    SetSize(GetHeaderSize()+payloadSize);
+    memmove(GetPayloadPtr(), oldPayload, payloadSize);
+
+	// Set the Extension Size
+	// *** We will be only using 1-byte Header as defined in RFC 6464
+	SetExtensionSize(1);
+
+	// Set the Extension Type
+	// *** We will be only using 1-byte Header as defined in RFC 6464 -- 0xBEDE = 48862d
+	SetExtensionType(48862);
+
+	// Set the Extension Flag
+	SetExtension(true);
+
+	// Now set the ID and len field of the 1 byte Extension Header -- ID = 7 | len = 0 | IDlen = 0x70 = 112
+	WORD temp = 0x7000;
+	temp |= (BYTE)audioLevel;
+	*(PUInt16b *)&theArray[MinHeaderSize + 4*GetContribSrcCount() + 4] = (WORD)temp;
+	/*(PUInt16b *)&theArray[MinHeaderSize + 4*GetContribSrcCount() + 4] = (WORD)((WORD)112 << 8 | (BYTE)audioLevel);*/
+
+	// Now set the V flag and level field
+	// ** We will be unsetting the V flag for now
+	PTRACE(3, "Got this audio level: " << audioLevel);
+
+	//*(PUInt16b *)&theArray[MinHeaderSize + 4*GetContribSrcCount() + 5] |= (WORD)audioLevel;
+}
+
+PINDEX RTP_DataFrame::GetAudioLevel() const
+{
+	if (GetExtension())
+	{
+		return *(BYTE *)&theArray[MinHeaderSize + 4*GetContribSrcCount() + 5];
+	}
+	else
+		return -1;
+}
 
 void RTP_DataFrame::PrintOn(ostream & strm) const
 {
@@ -809,18 +855,6 @@ RTP_Session::SendReceiveStatus RTP_Session::Internal_OnSendData(RTP_DataFrame & 
       oobTimeStampOutBase         = frame.GetTimestamp();
       oobTimeStampBase            = PTimer::Tick();
     }
-    
-    // display stuff
-    PTRACE(3, "RTP\tSession " << sessionID << ", first sent data:"
-              " ver=" << frame.GetVersion()
-           << " pt=" << frame.GetPayloadType()
-           << " psz=" << frame.GetPayloadSize()
-           << " m=" << frame.GetMarker()
-           << " x=" << frame.GetExtension()
-           << " seq=" << frame.GetSequenceNumber()
-           << " ts=" << frame.GetTimestamp()
-           << " src=" << hex << frame.GetSyncSource()
-           << " ccnt=" << frame.GetContribSrcCount() << dec);
   }
 
   else {
@@ -846,6 +880,18 @@ RTP_Session::SendReceiveStatus RTP_Session::Internal_OnSendData(RTP_DataFrame & 
       txStatisticsCount++;
     }
   }
+
+  // display stuff
+  PTRACE(3, "RTP\tSession " << sessionID << ", first sent data:"
+            " ver=" << frame.GetVersion()
+         << " pt=" << frame.GetPayloadType()
+         << " psz=" << frame.GetPayloadSize()
+         << " m=" << frame.GetMarker()
+         << " x=" << frame.GetExtension()
+         << " seq=" << frame.GetSequenceNumber()
+         << " ts=" << frame.GetTimestamp()
+         << " src=" << hex << frame.GetSyncSource()
+         << " ccnt=" << frame.GetContribSrcCount() << dec);
 
   lastSentPacketTime = tick;
 

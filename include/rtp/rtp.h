@@ -158,7 +158,22 @@ class RTP_DataFrame : public PBYTEArray
     PBoolean   SetPayloadSize(PINDEX sz);
     BYTE * GetPayloadPtr()     const { return (BYTE *)(theArray+GetHeaderSize()); }
 
+    /* **************  RFC 6464  *************** *
+     * ***************************************** *
+     * ***************************************** */
+     void SetRFC6464(int audioLevel);
+     //void SetAudioLevel(int audiolev) { audioLevel = audiolev; }
+     //int GetAudioLevel() { return audioLevel;}
+     //void SetRFC6464Flag() { rfc6464 = PTrue;}
+     //PBoolean GetRFC6464Flag() { return rfc6464;}
+     PINDEX GetAudioLevel() const;
+
+
+
     virtual void PrintOn(ostream & strm) const;
+
+    //PBoolean rfc6464;
+    //int audioLevel;
 
   protected:
     PINDEX payloadSize;
@@ -270,6 +285,7 @@ class RTP_ControlFrame : public PBYTEArray
       unsigned type,            ///<  Description type
       const PString & data      ///<  Data for description
     );
+
 #pragma pack()
 
   protected:

@@ -364,6 +364,7 @@ OpalPCSSConnection::OpalPCSSConnection(OpalCall & call,
 {
   silenceDetector = new OpalPCM16SilenceDetector(endpoint.GetManager().GetSilenceDetectParams());
   echoCanceler = new OpalEchoCanceler;
+  audioLevelCalculator = new OpalAudioLevelCalculator(endpoint.GetManager().GetAudioLevelParams());
 
   PTRACE(4, "PCSS\tCreated PC sound system connection: token=\"" << callToken << "\" "
             "player=\"" << playDevice << "\" recorder=\"" << recordDevice << '"');
@@ -473,7 +474,10 @@ void OpalPCSSConnection::OnPatchMediaStream(PBoolean isSource,
   if (patch.GetSource().GetMediaFormat().GetMediaType() == OpalMediaType::Audio()) {
     PTRACE(3, "PCSS\tAdding filters to patch");
     if (isSource)
-      patch.AddFilter(silenceDetector->GetReceiveHandler(), OpalPCM16);
+    {
+        patch.AddFilter(silenceDetector->GetReceiveHandler(), OpalPCM16);
+        patch.AddFilter(audioLevelCalculator->GetReceiveHandler(), OpalPCM16);
+    }
     clockRate = patch.GetSource().GetMediaFormat().GetClockRate();
     echoCanceler->SetParameters(endpoint.GetManager().GetEchoCancelParams());
     echoCanceler->SetClockRate(clockRate);

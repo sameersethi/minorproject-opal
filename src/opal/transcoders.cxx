@@ -152,6 +152,17 @@ PBoolean OpalTranscoder::ConvertFrames(const RTP_DataFrame & input, RTP_DataFram
   // and the input payload directly from the input media format
   output.front().SetPayloadType(GetPayloadType(false));
 
+  // Check if extension flag is setup. Set the header extension in output according to RFC 6464 then
+  if (input.GetExtension() == PTrue) {
+	  if (input.GetAudioLevel() != -1) {
+		  output.front().SetExtension(PTrue);
+		  output.front().SetRFC6464(input.GetAudioLevel());
+
+	  } else {
+		  PTRACE(3, "Got Here: Audio Level : ERROR: Audio   " << input.GetAudioLevel());
+	  }
+  }
+
   // do not transcode if no match
   RTP_DataFrame::PayloadTypes packetPayloadType = input.GetPayloadType();
   RTP_DataFrame::PayloadTypes formatPayloadType = inputMediaFormat.GetPayloadType();
